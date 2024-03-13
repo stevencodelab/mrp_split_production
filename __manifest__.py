@@ -9,15 +9,12 @@
     "depends": ["mrp","product","stock"],
     "data": [
         "security/ir.model.access.csv",
-        "views/split_production_view.xml",
+        "views/split_production_inherit_view.xml",
         "wizard/mrp_production_split.xml",
+        "wizard/mrp_production_backorder.xml",
     ],
-
+    
     'auto_install': False,
     'installable': True,
     'application': True,
-
-    'pre_init_hook': '_pre_init_mrp',
-    'post_init_hook': '_create_warehouse_data',
-    'uninstall_hook': 'uninstall_hook',
 }
