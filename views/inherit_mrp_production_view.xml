@@ -2,20 +2,28 @@
 <odoo>
     <data>
 
-        <!-- Action for splitting work order -->
-        <record id="action_mrp_workorder_split" model="ir.actions.act_window">
-            <field name="name">Split Work Order</field>
-            <field name="type">ir.actions.act_window</field>
+        <record id="action_mrp_production_split_multi" model="ir.actions.act_window">
+            <field name="name">Split productions</field>
+            <field name="res_model">mrp.production.split.multi</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_mrp_production_split" model="ir.actions.act_window">
+            <field name="name">Split production</field>
             <field name="res_model">mrp.production.split</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <!-- Menuitem for the action -->
-        <menuitem id="menu_mrp_workorder_split" name="Split Work Order"
-                  parent="mrp.menu_mrp_root" sequence="10"/>
-        <menuitem id="menu_mrp_workorder_split_action" name="Split Work Order"
-                  parent="menu_mrp_workorder_split" action="action_mrp_workorder_split"/>
+        <record id="action_production_order_split" model="ir.actions.server">
+            <field name="name">Split</field>
+            <field name="model_id" ref="mrp.model_mrp_production"/>
+            <field name="binding_model_id" ref="mrp.model_mrp_production"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">action = records.action_split()</field>
+        </record>
 
     </data>
 </odoo>
