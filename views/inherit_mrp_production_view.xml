@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- Action for splitting work order -->
+        <record id="action_mrp_workorder_split" model="ir.actions.act_window">
+            <field name="name">Split Work Order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">mrp.production.split</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- Menuitem for the action -->
+        <menuitem id="menu_mrp_workorder_split" name="Split Work Order"
+                  parent="mrp.menu_mrp_root" sequence="10"/>
+        <menuitem id="menu_mrp_workorder_split_action" name="Split Work Order"
+                  parent="menu_mrp_workorder_split" action="action_mrp_workorder_split"/>
+
+    </data>
+</odoo>
