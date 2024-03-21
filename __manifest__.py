@@ -9,7 +9,8 @@
     "depends": ["mrp","product","stock"],
     "data": [
         "security/ir.model.access.csv",
-        "views/split_production_inherit_view.xml",
+        "views/inherit_mrp_production_view.xml",
+        "views/inherit_mrp_workorder_view.xml",
         "wizard/mrp_production_split.xml",
         "wizard/mrp_production_backorder.xml",
     ],
