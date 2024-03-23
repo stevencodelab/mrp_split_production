@@ -1,7 +1,7 @@
 # MRP-Split-Production
 Split Production For MRP Odoo 14 Only
 
-MRP Split Production
+MRP Split Production (still have some problem and error)
 =================
 
 The ``mrp_split_production`` module holds new work order lot concepts to
