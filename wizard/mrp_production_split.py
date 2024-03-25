@@ -29,7 +29,7 @@ class MrpWorkorderSplit(models.TransientModel):
             d.It appends the ID of the newly created work order to the new_workorders list.
 
         3. Adjusting Quantities:
-            a.It decreases the quantity producing of the original self.production_id by self.quantity_to_split.
+            It decreases the quantity producing of the original self.production_id by self.quantity_to_split.
             
         4. Updating Quantity for Each Work Order:
             a.It calculates the quantity per work order (qty_per_workorder) by dividing the total quantity to produce by the quantity to split.
@@ -39,29 +39,15 @@ class MrpWorkorderSplit(models.TransientModel):
     def action_split_workorder(self):
         new_workorders = []
         total_qty_to_produce = self.production_id.product_qty 
-
-        # Penanganan pembagian dengan nol
-        if self.quantity_to_split <= 0:
-            raise ValueError("Quantity to split must be greater than zero")
-
-        # Perhitungan jumlah produk yang akan diproduksi per work order baru
-        qty_per_workorder = total_qty_to_produce / self.quantity_to_split
-
         for i in range(int(self.quantity_to_split)):
-            # Buat nama baru untuk work order
             new_name = f"{self.production_id.name} - {i + 1:04d}"
-            
-            # Buat work order baru langsung dari manufacturing order yang ada
-            new_workorder = self.env['mrp.production'].create({
-                'name': new_name,
-                'product_id': self.production_id.product_id.id,
-                'product_qty': qty_per_workorder,
-                'product_uom_id' : self.production_id.product_uom_id.id,
-                'date_planned_start': self.production_id.date_planned_start,
-                'bom_id': self.production_id.bom_id.id,
-                # Masukkan bidang lain yang diperlukan
-            })
+            new_workorder = self.production_id.copy(default={'name': new_name, 'qty_producing': 1})
             new_workorders.append(new_workorder.id)
+        self.production_id.qty_producing -= self.quantity_to_split
+        
+        qty_per_workorder = total_qty_to_produce / self.quantity_to_split
+        for new_workorder in self.env['mrp.production'].browse(new_workorders): 
+            new_workorder.product_qty = qty_per_workorder
 
         return {
             'name' : 'Manufacturing Orders',
@@ -71,7 +57,7 @@ class MrpWorkorderSplit(models.TransientModel):
             'res_id': new_workorders,
             'target': 'current',
         }
-
+    
     # Action Counter Split Number
     @api.depends('production_detailed_vals_ids')
     def _compute_counter(self):
