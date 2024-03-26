@@ -35,14 +35,15 @@ class MrpWorkorderSplit(models.TransientModel):
             a.It calculates the quantity per work order (qty_per_workorder) by dividing the total quantity to produce by the quantity to split.
             b.It iterates over the newly created work orders using their IDs stored in new_workorders.
             c.For each work order, it updates the product_qty field to qty_per_workorder."""
-
+    
     def action_split_workorder(self):
         new_workorders = []
         total_qty_to_produce = self.production_id.product_qty 
         for i in range(int(self.quantity_to_split)):
-            new_name = f"{self.production_id.name} - {i + 1:04d}"
-            new_workorder = self.production_id.copy(default={'name': new_name, 'qty_producing': 1})
+            new_name = f"{self.production_id.id} - {i + 1:04d}"
+            new_workorder = self.production_id.copy(default={'id': new_name, 'qty_producing': 1})
             new_workorders.append(new_workorder.id)
+        self.production_id.qty_producing -= self.quantity_to_split
         
         qty_per_workorder = total_qty_to_produce / self.quantity_to_split
         for new_workorder in self.env['mrp.production'].browse(new_workorders): 
@@ -94,7 +95,7 @@ class MrpWorkorderSplit(models.TransientModel):
         for wizard in self:
             if wizard.production_detailed_vals_ids:
                 wizard.valid_details = float_compare(wizard.product_qty, sum(wizard.production_detailed_vals_ids.mapped('quantity')), precision_rounding=wizard.product_uom_id.rounding) == 0   
-    
+
 class MrpProductionSplitMulti(models.TransientModel):
     _name = 'mrp.production.split.multi'
     _description = "Wizard to Split Multiple Productions"
@@ -111,4 +112,3 @@ class MrpProductionSplitLine(models.TransientModel):
     date = fields.Datetime('Schedule Date')
     production_id=fields.Many2one('mrp.production', 'Manufacturing Order')
     product_id=fields.Many2one(related='production_id.product_id')
-
