@@ -20,7 +20,7 @@
                         <span><field name="product_uom_id" groups="uom.group_uom"/></span>
                     </div>
                     <group name="quantity_split">
-                        <field name="quantity_to_split" placeholder="Input number of split here "/>
+                        <field name="quantity_per_workorder" placeholder="Quantity per Work Order"/>
                     </group>
                         <notebook>
                             <page string="Split Details">
@@ -45,13 +45,11 @@
                 </form>
             </field>
         </record>
-
         <record id="action_mrp_production_split_multi" model="ir.actions.act_window">
             <field name="name">Split productions</field>
             <field name="res_model">mrp.production.split</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
-
     </data>
 </odoo>
