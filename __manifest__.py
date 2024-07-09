@@ -1,6 +1,6 @@
 {
     "name": "MRP Production Split",
-    "summary": "Split Manufacturing Orders into smaller ones",
+    "summary": "Split Manufacturing Orders Into Smaller",
     "version": "14.0.1.0.0",
     "author": "Steven Morison (stevenmorizon123@gmail.com)",
     "website": "",
