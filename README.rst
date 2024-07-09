@@ -1,9 +1,11 @@
 # MRP-Split-Production
-Split Production For MRP Odoo 14 Only
+Split Production For MRP Odoo 14 Only (Adaptation from Odoo 17). Split Work Order Based On `Work Center Capacity`
 
-MRP Split Production (still have some problem and error)
-=================
+# How Its Work :
 
-The ``mrp_split_production`` module holds new work order lot concepts to
-split work orders taking into acccount the workcenters product capacity for
-those workcenters related to the manufacturing order routing operations.
+1. Create Manufacturing Order
+2. Confirm the Manufacturing Order
+3. Click the Setting's icon on header and click Split
+4. Input the quantity for each Splited Work Order
+
+
