@@ -17,25 +17,30 @@ class MrpWorkorderSplit(models.TransientModel):
     production_detailed_vals_ids = fields.One2many('mrp.production.split.line', 'mrp_production_split_id','Split Details', compute="_compute_details", store=True, readonly=False)
     valid_details = fields.Boolean("Valid", compute="_compute_valid_details")
     quantity_per_workorder = fields.Float(string='Quantity per Work Order', required=True)
-    
+        
     """  action_split_workorder :
         1. Initialization:
-            a.It initializes an empty list new_workorders to store the IDs of the newly created work orders.
-            b.It retrieves the total quantity to produce from self.production_id.product_qty.
+            a. Inisialisasi list kosong new_workorders untuk menyimpan ID dari work order baru yang dibuat.
 
         2. Splitting Work Orders:
-            a.It iterates self.quantity_to_split times (converted to an integer).
-            b.Inside the loop, it creates a new name for each split work order by appending the index of the loop to the original production name.
-            c.It then creates a new work order by copying the original self.production_id, but with a new name and a quantity producing of 1.
-            d.It appends the ID of the newly created work order to the new_workorders list.
+            a. Melakukan iterasi melalui self.production_detailed_vals_ids.
+            b. Untuk setiap baris detail, membuat nama baru untuk work order yang dipisah dengan menambahkan indeks ke nama produksi asli.
+            c. Membuat work order baru dengan menyalin self.production_id, tetapi dengan nama baru dan kuantitas produksi sesuai dengan detail yang dihitung.
+            d. Menambahkan ID work order baru ke list new_workorders.
+        
+        3. Adjusting Original Production:
+            a. Membatalkan production order asli dengan memanggil self.production_id.action_cancel().
+        
+        4. Returning Result:
+            a. Mengembalikan action untuk menampilkan tree view dari work order baru yang dibuat.
+            b. Domain diatur untuk hanya menampilkan work order baru (menggunakan ID dalam new_workorders).
 
-        3. Adjusting Quantities:
-            It decreases the quantity producing of the original `self.production_id` by `self.quantity_to_split`.
-            
-        4. Updating Quantity for Each Work Order:
-            a.It calculates the quantity per work order (qty_per_workorder) by dividing the total quantity to produce by the quantity to split.
-            b.It iterates over the newly created work orders using their IDs stored in new_workorders.
-            c.For each work order, it updates the product_qty field to qty_per_workorder."""
+    Perubahan utama pada function ini adalah sebagai berikut :
+    - Tidak lagi menggunakan self.quantity_to_split untuk menentukan jumlah iterasi.
+    - Kuantitas untuk setiap work order baru diambil dari production_detailed_vals_ids, yang dihitung berdasarkan quantity_per_workorder.
+    - Production order asli dibatalkan setelah pemisahan, bukan hanya mengurangi kuantitasnya.
+    - Tidak ada lagi perhitungan qty_per_workorder di dalam method ini, karena sudah dihitung di _compute_details.
+    """
     
     def action_split_workorder(self):
         new_workorders = []
@@ -100,7 +105,7 @@ class MrpWorkorderSplit(models.TransientModel):
         for wizard in self:
             if wizard.production_detailed_vals_ids:
                 wizard.valid_details = float_compare(wizard.product_qty, sum(wizard.production_detailed_vals_ids.mapped('quantity')), precision_rounding=wizard.product_uom_id.rounding) == 0   
-
+    
 class MrpProductionSplitMulti(models.TransientModel):
     _name = 'mrp.production.split.multi'
     _description = "Wizard to Split Multiple Productions"
